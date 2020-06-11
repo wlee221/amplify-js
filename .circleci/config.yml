@@ -106,7 +106,7 @@ commands:
             yarn
       - run:
           name: 'Start << parameters.test_name >> Sample server in background'
-          command: yarn start &
+          command: yarn start
           background: true
       - run:
           name: 'Run cypress tests for << parameters.test_name >> Sample'
@@ -268,7 +268,7 @@ jobs:
     steps:
       - prepare_test_env
       - integ_test_js:
-          test_name: 'React DataStore'
+          test_name: 'React Storage'
           framework: react
           spec: storage/storage.spec.js
 
