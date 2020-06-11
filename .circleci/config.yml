@@ -250,6 +250,7 @@ jobs:
             echo $SSH_HOST_PUBLIC_KEY >> ~/.ssh/known_hosts
             git clone $AMPLIFY_JS_SAMPLES_STAGING_URL
             cd amplify-js-samples-staging
+            git checkout storage-integ-test
             yarn
       - save_cache:
           key: amplify-js-{{ .Branch }}-{{ checksum "amplify-js-samples-staging/yarn.lock" }}
@@ -314,6 +315,17 @@ jobs:
           test_name: 'React DataStore'
           framework: react
           spec: datastore/many-to-many.spec.js
+
+  integ_react_storage:
+    executor: js-test-executor
+    <<: *test_env_vars
+    working_directory: ~/amplify-js-samples-staging/samples/react/storage/storageApp
+    steps:
+      - prepare_test_env
+      - integ_test_js:
+          test_name: 'React DataStore'
+          framework: react
+          spec: storage/storage.spec.js
 
   integ_setup_ui:
     executor: build-executor
@@ -463,6 +475,7 @@ releasable_branches: &releasable_branches
       - master
       - ui-components/master
       - 1.0-stable
+      - storage-integ-test # TODO: remove this before merging
 
 workflows:
   build_test_deploy:
@@ -471,84 +484,90 @@ workflows:
       - integ_setup:
           filters:
             <<: *releasable_branches
-      - integ_setup_ui:
-          filters:
-            <<: *releasable_branches
+      # - integ_setup_ui:
+      #     filters:
+      #       <<: *releasable_branches
       - unit_test:
           requires:
             - build
-      - integ_react_auth:
+      # - integ_react_auth:
+      #     requires:
+      #       - integ_setup
+      #       - build
+      #     filters:
+      #       <<: *releasable_branches
+      # - integ_angular_auth:
+      #     requires:
+      #       - integ_setup
+      #       - build
+      #     filters:
+      #       <<: *releasable_branches
+      # - integ_vue_auth:
+      #     requires:
+      #       - integ_setup
+      #       - build
+      #     filters:
+      #       <<: *releasable_branches
+      # - integ_react_predictions:
+      #     requires:
+      #       - integ_setup
+      #       - build
+      #     filters:
+      #       <<: *releasable_branches
+      # - integ_react_datastore:
+      #     requires:
+      #       - integ_setup
+      #       - build
+      #     filters:
+      #       <<: *releasable_branches
+      - integ_react_storage:
           requires:
             - integ_setup
             - build
           filters:
             <<: *releasable_branches
-      - integ_angular_auth:
-          requires:
-            - integ_setup
-            - build
-          filters:
-            <<: *releasable_branches
-      - integ_vue_auth:
-          requires:
-            - integ_setup
-            - build
-          filters:
-            <<: *releasable_branches
-      - integ_react_predictions:
-          requires:
-            - integ_setup
-            - build
-          filters:
-            <<: *releasable_branches
-      - integ_react_datastore:
-          requires:
-            - integ_setup
-            - build
-          filters:
-            <<: *releasable_branches
-      - integ_rn_ios_storage:
-          requires:
-            - integ_setup
-            - build
-          filters:
-            <<: *releasable_branches
-      - integ_react_auth_ui:
-          requires:
-            - integ_setup_ui
-            - build
-          filters:
-            <<: *releasable_branches
-      - integ_angular_auth_ui:
-          requires:
-            - integ_setup_ui
-            - build
-          filters:
-            <<: *releasable_branches
-      - integ_vue_auth_ui:
-          requires:
-            - integ_setup_ui
-            - build
-          filters:
-            <<: *releasable_branches
-      - deploy:
-          filters:
-            <<: *releasable_branches
-          requires:
-            - unit_test
-            - integ_react_predictions
-            - integ_react_datastore
-            - integ_react_auth
-            - integ_angular_auth
-            - integ_vue_auth
-            - integ_react_auth_ui
-            - integ_angular_auth_ui
-            - integ_vue_auth_ui
-            - integ_rn_ios_storage
-      - post_release:
-          filters:
-            branches:
-              only:
-                - release
-          requires:
-            - deploy
+      # - integ_rn_ios_storage:
+      #     requires:
+      #       - integ_setup
+      #       - build
+      #     filters:
+      #       <<: *releasable_branches
+      # - integ_react_auth_ui:
+      #     requires:
+      #       - integ_setup_ui
+      #       - build
+      #     filters:
+      #       <<: *releasable_branches
+      # - integ_angular_auth_ui:
+      #     requires:
+      #       - integ_setup_ui
+      #       - build
+      #     filters:
+      #       <<: *releasable_branches
+      # - integ_vue_auth_ui:
+      #     requires:
+      #       - integ_setup_ui
+      #       - build
+      #     filters:
+      #       <<: *releasable_branches
+      # - deploy:
+      #     filters:
+      #       <<: *releasable_branches
+      #     requires:
+      #       - unit_test
+      #       - integ_react_predictions
+      #       - integ_react_datastore
+      #       - integ_react_auth
+      #       - integ_angular_auth
+      #       - integ_vue_auth
+      #       - integ_react_auth_ui
+      #       - integ_angular_auth_ui
+      #       - integ_vue_auth_ui
+      #       - integ_rn_ios_storage
+      # - post_release:
+      #     filters:
+      #       branches:
+      #         only:
+      #           - release
+      #     requires:
+      #       - deploy
