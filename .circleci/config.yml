@@ -106,7 +106,7 @@ commands:
             yarn
       - run:
           name: 'Start << parameters.test_name >> Sample server in background'
-          command: yarn start
+          command: yarn start &
           background: true
       - run:
           name: 'Run cypress tests for << parameters.test_name >> Sample'
@@ -496,12 +496,12 @@ workflows:
       # - unit_test:
       #     requires:
       #       - build
-      # - integ_react_auth:
-      #     requires:
-      #       - integ_setup
-      #       - build
-      #     filters:
-      #       <<: *releasable_branches
+      - integ_react_auth:
+          requires:
+            - integ_setup
+            - build
+          filters:
+            <<: *releasable_branches
       # - integ_angular_auth:
       #     requires:
       #       - integ_setup
