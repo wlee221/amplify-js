@@ -7,6 +7,10 @@ import {
 	PostTextCommand,
 } from '@aws-sdk/client-lex-runtime-service';
 
+global.Response = () => {};
+global.Response.prototype.arrayBuffer = () => {
+	return Promise.resolve(new ArrayBuffer(0));
+};
 LexRuntimeServiceClient.prototype.send = jest.fn((command, callback) => {
 	if (command instanceof PostTextCommand) {
 		if (command.input.inputText === 'done') {
@@ -54,6 +58,7 @@ LexRuntimeServiceClient.prototype.send = jest.fn((command, callback) => {
 						m1: 'hi',
 						m2: 'done',
 					},
+					audioStream: new Uint8Array(),
 				};
 				return Promise.resolve(result);
 			} else {
@@ -351,6 +356,7 @@ describe('Interactions', () => {
 			expect(responseVoice).toEqual({
 				dialogState: 'ElicitSlot',
 				message: 'voice:echo:voice:hi',
+				audioStream: new Uint8Array(),
 			});
 
 			const responseText = await interactions.send(
@@ -360,6 +366,7 @@ describe('Interactions', () => {
 			expect(responseText).toEqual({
 				dialogState: 'ElicitSlot',
 				message: 'echo:hi',
+				audioStream: new Uint8Array(),
 			});
 		});
 
@@ -424,6 +431,7 @@ describe('Interactions', () => {
 			expect(responseVoice).toEqual({
 				dialogState: 'ElicitSlot',
 				message: 'voice:echo:voice:hi',
+				audioStream: new Uint8Array(),
 			});
 
 			const responseText = await interactions.send(
@@ -433,6 +441,7 @@ describe('Interactions', () => {
 			expect(responseText).toEqual({
 				dialogState: 'ElicitSlot',
 				message: 'echo:hi',
+				audioStream: new Uint8Array(),
 			});
 		});
 
@@ -501,6 +510,7 @@ describe('Interactions', () => {
 						m1: 'voice:hi',
 						m2: 'voice:done',
 					},
+					audioStream: new Uint8Array(),
 				});
 
 				const textResponse = await interactions.send(
@@ -514,6 +524,7 @@ describe('Interactions', () => {
 						m1: 'hi',
 						m2: 'done',
 					},
+					audioStream: new Uint8Array(),
 				});
 			});
 
@@ -582,6 +593,7 @@ describe('Interactions', () => {
 						m1: 'voice:hi',
 						m2: 'voice:done',
 					},
+					audioStream: new Uint8Array(),
 				});
 
 				const textResponse = await interactions.send(
@@ -595,6 +607,7 @@ describe('Interactions', () => {
 						m1: 'hi',
 						m2: 'done',
 					},
+					audioStream: new Uint8Array(),
 				});
 			});
 
@@ -836,6 +849,7 @@ describe('Interactions', () => {
 				expect(responseVoice).toEqual({
 					dialogState: 'ElicitSlot',
 					message: 'voice:echo:voice:hi',
+					audioStream: new Uint8Array(),
 				});
 
 				const responseText = await interactions.send(
@@ -845,6 +859,7 @@ describe('Interactions', () => {
 				expect(responseText).toEqual({
 					dialogState: 'ElicitSlot',
 					message: 'echo:hi',
+					audioStream: new Uint8Array(),
 				});
 			});
 		});
