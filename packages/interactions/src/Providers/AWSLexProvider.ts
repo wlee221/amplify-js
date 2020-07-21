@@ -128,12 +128,16 @@ export class AWSLexProvider extends AbstractInteractionsProvider {
 				return Promise.reject(err);
 			}
 		} else {
-			if (typeof message.content !== 'string') {
+			const {
+				content,
+				options: { messageType },
+			} = message;
+			if (messageType === 'voice') {
 				params = {
 					botAlias: this._config[botname].alias,
 					botName: botname,
 					contentType: 'audio/x-l16; sample-rate=16000',
-					inputStream: message.content,
+					inputStream: content,
 					userId: credentials.identityId,
 					accept: 'audio/mpeg',
 				};
@@ -142,7 +146,7 @@ export class AWSLexProvider extends AbstractInteractionsProvider {
 					botAlias: this._config[botname].alias,
 					botName: botname,
 					contentType: 'text/plain; charset=utf-8',
-					inputStream: message.content,
+					inputStream: content,
 					userId: credentials.identityId,
 					accept: 'audio/mpeg',
 				};
@@ -150,7 +154,9 @@ export class AWSLexProvider extends AbstractInteractionsProvider {
 			logger.debug('postContent to lex', message);
 			try {
 				const postContentCommand = new PostContentCommand(params);
-				let data = await this.lexRuntimeServiceClient.send(postContentCommand);
+				const data = await this.lexRuntimeServiceClient.send(
+					postContentCommand
+				);
 				const audioArray = await convert(data.audioStream);
 				this.reportBotStatus(data, botname);
 				return { ...data, ...{ audioStream: audioArray } };

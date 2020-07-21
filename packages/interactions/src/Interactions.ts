@@ -15,8 +15,7 @@ import {
 	InteractionsProviders,
 	InteractionsProvider,
 	InteractionsMessage,
-	InteractionsTextResponse,
-	InteractionsVoiceResponse,
+	InteractionsResponse,
 } from './types';
 import { Amplify, ConsoleLogger as Logger } from '@aws-amplify/core';
 import { AWSLexProvider } from './Providers';
@@ -100,11 +99,11 @@ export class InteractionsClass {
 	public async send(
 		botname: string,
 		message: string
-	): Promise<InteractionsTextResponse>;
+	): Promise<InteractionsResponse>;
 	public async send(
 		botname: string,
 		message: InteractionsMessage
-	): Promise<InteractionsVoiceResponse>;
+	): Promise<InteractionsResponse>;
 	public async send(botname: string, message: object): Promise<object>;
 	public async send(
 		botname: string,
