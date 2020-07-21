@@ -495,14 +495,7 @@ describe('Interactions', () => {
 						m2: 'done',
 					},
 				});
-
-				const interactionsMessageVoice = {
-					content: 'voice:done',
-					options: {
-						messageType: 'voice',
-					},
-				};
-
+				
 				const interactionsMessageText = {
 					content: 'done',
 					options: {
@@ -612,14 +605,6 @@ describe('Interactions', () => {
 						m2: 'done',
 					},
 				});
-
-				const interactionsMessageVoice = {
-					content: 'voice:done',
-					options: {
-						messageType: 'voice',
-					},
-				};
-
 				const interactionsMessageText = {
 					content: 'done',
 					options: {
